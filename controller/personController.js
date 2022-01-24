@@ -63,7 +63,7 @@ module.exports.updatePerson = async function (req, res) {
         for(let key in req.body) {
             person[key] = req.body[key]; 
         }
-        person.save(); 
+        person.save({validateBeforeSave: false}); 
         res.json(person); 
     } catch (err) {
         res.status(500).json({

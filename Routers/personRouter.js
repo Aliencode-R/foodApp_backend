@@ -2,6 +2,7 @@ const express = require("express");
 const personRouter = express.Router();
 const personModel = require("../Models/personModel");
 let {getPerson, getAllPersons, createPerson, deletePerson, updatePerson} = require("../controller/personController"); 
+let {signup, login, forgetpassword, resetpassword, logout} = require("../controller/authController"); 
 
 personRouter.route("/:id")
     .get(getPerson)
@@ -10,24 +11,21 @@ personRouter.route("/:id")
 
 personRouter.route("/")
     .get(getAllPersons)
-    .post(createPerson); // temp; 
+    .post(createPerson); 
 
-// personRouter.route("/signup")
-//     .post(signup);
+personRouter.route("/signup")
+    .post(signup);
 
-// personRouter.route("/login")
-//     .post(login);
+personRouter.route("/login")
+    .post(login);
 
-// personRouter.route("/signup")
-//     .post(signup);
+personRouter.route('/forgetpassword')
+    .post(forgetpassword)
 
-// personRouter.route('/forgetpassword')
-//     .post(forgetpassword)
+personRouter.route('/resetpassword')
+    .post(resetpassword)
 
-// personRouter.route('/resetpassword/:token')
-//     .post(resetpassword)
-
-// personRouter.route('/logout')
-//     .get(logout)
+personRouter.route('/logout')
+    .get(logout)
 
 module.exports = personRouter; 
