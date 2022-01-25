@@ -1,13 +1,17 @@
 const express = require("express");
 const app = express(); 
 const cookieParser = require("cookie-parser"); 
-const personRouter = require("./Routers/personRouter"); 
+const personRouter = require("./Routers/personRouter");
+const planRouter = require("./Routers/planRouter"); 
 
 
 app.use(express.json()); 
 app.use(cookieParser());
 
 app.use("/api/person/", personRouter);
+app.use("/api/plan/", planRouter);
+
+
 // app.use(express.static("public"));
 
 app.get("/", function(req, res) {

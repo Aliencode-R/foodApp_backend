@@ -2,6 +2,7 @@ let mongoose = require("mongoose")
 let {DB_LINK} = require("../secrets"); 
 let emailValidator = require("email-validator");
 const crypto = require("crypto");  
+const bcrypt = require("bcrypt"); 
 
 
 mongoose.connect(DB_LINK)
@@ -56,13 +57,20 @@ personSchema.methods.createToken = function() {
     return token;
 }
 
-personSchema.methods.resetHandler = function(passwrod, confirmPassword) {
-    this.password = passwrod; 
-    this.confirmPassword = confirmPassword;
+personSchema.methods.resetHandler = async function(password, confirmPassword) {
+    // const salt = await bcrypt.genSalt(10);
+    // this.password = await bcrypt.hash(password, salt); 
+    // this.password = passwrod; 
+    // this.confirmPassword = await bcrypt.hash(confirmPassword, salt);
+    // console.log(this.password, this.confirmPassword);
+    this.password = password; 
+    this.confirmPassword = confirmPassword; 
     this.token = undefined; 
 }
 
-personSchema.pre("save", function() {
+personSchema.pre("save", async function() {
+    const salt = await bcrypt.genSalt(10); 
+    this.password = await bcrypt.hash(this.password, salt); 
     this.confirmPassword = undefined; 
 })
 

@@ -22,10 +22,10 @@ personRouter.route("/login")
 personRouter.route('/forgetpassword')
     .post(forgetpassword)
 
-personRouter.route('/resetpassword')
+personRouter.route('/resetpassword/:token')
     .post(resetpassword)
 
 personRouter.route('/logout')
-    .get(logout)
+    .post(logout)
 
 module.exports = personRouter; 

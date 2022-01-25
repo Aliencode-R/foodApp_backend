@@ -24,9 +24,9 @@ module.exports.login = async function (req, res) {
                 message: "no email found"
             })
         }
-        let person = await personModel.find({ email: req.body.email });
-        //TODO: ENABLE PASSWORD ENCRYPTION
-        if (person.password != req.body.password) {
+        let person = await personModel.findOne({ email: req.body.email });
+        let passwordMatch = await bcrypt.compare(req.body.password, person.password);
+        if (!passwordMatch) {
             return res.json({
                 message: "wrong password"
             })
@@ -49,12 +49,16 @@ module.exports.forgetpassword = async function (req, res) {
         let { email } = req.body;
         const person = await personModel.findOne({ email });
         if (person) {
-            let resetToken = person.createToken();
-            await sendMail("resetpassword", person);
+            let tk = person.createToken();
+            person.save({ validateBeforeSave: false });
+            let resetLink = `${req.protocol}://${req.get("host")}/resetpassword/${person.token}`
+            
+            let personObj = person; 
+            personObj["resetLink"] = resetLink;
+            await sendMail("resetpassword", personObj); ;
             res.json({
                 message: "token sent to email",
-                user,
-                token
+                person
             })
         } else {
             res.json({
@@ -70,11 +74,13 @@ module.exports.forgetpassword = async function (req, res) {
 
 module.exports.resetpassword = async function (req, res) {
     try {
-        let { token, password, confirmPassword } = req.body;
+        let token = req.params.token;
+        let {password, confirmPassword } = req.body;
+        console.log(token, password, confirmPassword);
         let person = await personModel.findOne({ token });
         if (!person) {
             return res.json({
-                message: "User not found"
+                message: "Person not found" 
             })
         }
         person.resetHandler(password, confirmPassword); 
@@ -92,7 +98,7 @@ module.exports.resetpassword = async function (req, res) {
 
 module.exports.logout = async function (req, res) {
     try {
-        res.cookie("login", { maxAge: 1 });
+        res.cookie("login", "", { maxAge: 100, httpOnly: true });
         res.json({
             message: "user logged out"
         })

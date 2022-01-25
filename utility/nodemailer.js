@@ -3,6 +3,7 @@ const { NODEMAILER_KEY } = require('../secrets');
 // https - 443 http 8080
 //userObj-> name email password 
 module.exports.sendMail = async function sendMail(str, data) {
+    console.log("mail",data);
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -29,8 +30,9 @@ module.exports.sendMail = async function sendMail(str, data) {
         Osubject = `Reset Password`;
         Ohtml = `
     <h1>foodAp.com</h1>
-    Here is your link to reset your password !
-    ${data.resetPasswordLink}
+    Here is your token to reset your password !
+    ${data.token} or you can click on the following link: 
+    ${data.resetLink}
     `
     }
 
