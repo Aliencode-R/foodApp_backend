@@ -7,7 +7,7 @@ planRouter.route("/")
 .post(createPlan)
 
 planRouter.route("/top3") 
-.get(getTop3Plans) // to be tested
+.get(getTop3Plans) 
 
 planRouter.route("/:id")
 .get(getPlan)

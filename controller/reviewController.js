@@ -22,11 +22,11 @@ module.exports.getAllReviews = async function getAllReviews(req, res) {
         })
     }
 }
-// TODO: populate user and plan
+
 module.exports.getPlanReviews = async function (req, res) {
     try {
         let planId = req.params.id;
-        let reviews = await reviewModel.find({plan: planId}); 
+        let reviews = await reviewModel.find({plan: planId}).populate("user").populate("plan"); 
         res.json({
             message: "reviews retrieved successfully", 
             data: reviews
@@ -42,14 +42,16 @@ module.exports.createReview = async function (req, res) {
     try {
         let planId = req.params.id;
         let plan = await planModel.findById(planId); 
-        let review = await reviewModel.create(req.body); 
+        console.log(plan);
+
+        let review = await reviewModel.create({...req.body, plan: planId}); 
         plan.reviews.push(review._id); 
         if(plan.averageRating) {
             let sum = plan.averageRating * plan.reviews.length; 
-            let finalAvgRating = (sum + review.rating) / (plan.review.length + 1);
+            let finalAvgRating = (sum + review.rating) / (plan.reviews.length + 1);
             plan.averageRating = finalAvgRating; 
         } else {
-            plan.averageRating = reivew.rating; 
+            plan.averageRating = review.rating; 
         }
         await plan.save();  
         res.json({
@@ -65,15 +67,15 @@ module.exports.createReview = async function (req, res) {
 
 module.exports.deleteReview = async function (req, res) {
     try {
-        let review = await reviewModel.findById(req.params.id); 
-        let planId = reivew.plan; 
+        let review = await reviewModel.findByIdAndDelete(req.params.id); 
+        let planId = review.plan; 
         let plan = await planModel.findById(planId); 
         let idxOfReview = plan.reviews.indexOf(review._id); 
-        plan.reivews.splice(idxOfReview, 1); 
+        plan.reviews.splice(idxOfReview, 1); 
         if(plan.reviews.length == 0) {
             plan.averageRating = undefined; 
         } else {
-            let sum = (plan.averageRating * (plan.reivews.length + 1)); 
+            let sum = (plan.averageRating * (plan.reviews.length + 1)); 
             sum -= review.rating; 
             plan.averageRating = sum / plan.reviews.length; 
         }
