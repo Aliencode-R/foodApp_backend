@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const personRouter = require("./Routers/personRouter");
 const planRouter = require("./Routers/planRouter"); 
 const reviewRouter = require("./Routers/reviewRouter");
+const bookingRouter = require("./Routers/bookingRouter");
 
 
 app.use(express.json()); 
@@ -12,6 +13,7 @@ app.use(cookieParser());
 app.use("/api/person/", personRouter);
 app.use("/api/plan/", planRouter);
 app.use("/api/review/", reviewRouter); 
+app.use("/api/booking", bookingRouter); 
 
 app.get("/", function(req, res) {
     try{
