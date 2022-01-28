@@ -9,6 +9,7 @@ const bookingRouter = require("./Routers/bookingRouter");
 
 app.use(express.json()); 
 app.use(cookieParser());
+app.use(express.static('public'));
 
 app.use("/api/person/", personRouter);
 app.use("/api/plan/", planRouter);
