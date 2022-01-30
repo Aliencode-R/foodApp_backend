@@ -32,23 +32,15 @@ module.exports.createCheckoutSession = async (req, res) => {
     console.log("at create session");
     console.log(req.body);
     try {
-        const price = await stripe.prices.create({
-            currency: 'inr',
-            // recurring: {
-            //     interval: 'month',
-            //     usage_type: 'metered'
-            // },
-            product_data: {
-                name: 'Gold special',
-            },
-            nickname: 'Gold special price',
-            unit_amount: 3000,
-        });
+
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
                     // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                    price,
+                    // price,
+                    name: "one piece",
+                    currency: "inr",
+                    amount: 199, 
                     quantity: 1
                 },
             ],
@@ -58,7 +50,7 @@ module.exports.createCheckoutSession = async (req, res) => {
             // success_url: `${YOUR_DOMAIN}/success.html`,
             // cancel_url: `${YOUR_DOMAIN}/cancel.html`,
         });
-
+        console.log(session.url);
         res.redirect(300, session.url);
     } catch (err) {
         console.log(err.message);
@@ -66,21 +58,3 @@ module.exports.createCheckoutSession = async (req, res) => {
  
 }
 
-// app.post('/create-checkout-session', async (req, res) => {
-//     const session = await stripe.checkout.sessions.create({
-//         line_items: [
-//             {
-//                 // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-//                 price: '{{PRICE_ID}}',
-//                 quantity: 1,
-//             },
-//         ],
-//         mode: 'payment',
-//         success_url: `${YOUR_DOMAIN}/success.html`,
-//         cancel_url: `${YOUR_DOMAIN}/cancel.html`,
-//     });
-
-//     res.redirect(303, session.url);
-// });
-
-// app.listen(4242, () => console.log('Running on port 4242'));
